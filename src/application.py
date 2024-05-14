@@ -39,7 +39,7 @@ class Application():
         self.root.update()
 
     def save_unknow(self):
-        
+        """Create input frame"""
         self.content = tk.LabelFrame(self.f1)
 
         l1 = tk.Label(self.content, text="Name")
@@ -54,33 +54,9 @@ class Application():
         btn.grid(column=0, row=1, columnspan=4)
         btn2.grid(column=2, row=1, columnspan=2)
         self.content.grid(column=6, row=1, columnspan=4, rowspan=2)
-        """frame = self.last_img
-        form = tk.Tk()
-        form.title("Add person")
-
-        content = tk.LabelFrame(form)
-
-        l2=tk.Label(content,bg='red')
-        
-
-        l1 = tk.Label(content, text="Name")
-        e1 = tk.Entry(content)
-
-        btn = tk.Button(content, text="Save")
-
-        content.grid(row=0, column=0)
-
-        l1.grid(row=0, column=0)
-        e1.grid(row=0, column=1)
-        btn.grid(column=0, row=1, columnspan=4)
-        l2.grid(row=2, column=0)
-
-        img1 = np.ascontiguousarray(frame[:, :, ::-1])
-        img = ImageTk.PhotoImage(Image.fromarray(img1))
-        l2['image']=img
-        form.update()"""
 
     def save_person(self):
+        """Save the unknow person with the typed name"""
         encoding =self.fr.get_encoding(self.last_img)
         name = self.user_input.get()
 
@@ -89,9 +65,11 @@ class Application():
         self.cancel_save()
 
     def cancel_save(self):
+        """Close the input frame"""
         self.content.destroy()
 
     def on_closing(self):
+        """Ask for close application"""
         self.running=False
         self.video_capture.release()
         if messagebox.askyesno(title="Quit?", message="Do you really want to quit?"):

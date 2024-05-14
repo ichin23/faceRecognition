@@ -38,4 +38,3 @@ while True:
 # Release handle to the webcam
 video_capture.release()
 #cv2.destroyAllWindows()
-

@@ -48,6 +48,7 @@ class FaceRecognition():
         return self.face_names
 
     def get_encoding(self, img):
+        """return the face encoding from the face on img array"""
         return face_recognition.face_encodings(img)[0]
 
     def show_frame(self, frame) -> np.array:
