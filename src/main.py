@@ -1,40 +1,34 @@
+from threading import Thread
 import cv2
-from faceRecognition import FaceRecognition
-from database import Database
-from application import Application
+import asyncio
+from models.faceRecognition import FaceRecognition
+from models.database import Database
+from gui.application import Application
+
+def update_camera(app):
+    video_capture = cv2.VideoCapture(0)
+    process_this_frame = True
+    while True:
+        ret, frame = video_capture.read()
+        frame=cv2.flip(frame, 1)
+        # Only process every other frame of video to save time
+        if process_this_frame and ret :
+            asyncio.run(fr.process_frame(frame))
+        process_this_frame = not process_this_frame
+
+        # Display the resulting image
+        if ret:
+            #cv2.imshow('Video', fr.show_frame(frame))
+            app.update(fr.show_frame(frame))
 
 
-video_capture = cv2.VideoCapture(0)
+
 db = Database()
 fr = FaceRecognition(db)
-app=Application(db, fr, video_capture)
+app=Application()
 
-PROCESS_THIS_FRAME=True
+thread = Thread(target=update_camera, args=[app])
+thread.daemon=True
+thread.start()
 
-while True:
-    if not app.running:
-        if app.full_stop:
-            break
-        app.root.update()
-        continue
-    # Grab a single frame of video
-    ret, frame = video_capture.read()
-    frame=cv2.flip(frame, 1)
-    # Only process every other frame of video to save time
-    if PROCESS_THIS_FRAME and frame is not None :
-        fr.process_frame(frame)
-
-    PROCESS_THIS_FRAME = not PROCESS_THIS_FRAME
-
-    # Display the resulting image
-    #cv2.imshow('Video', frame)
-    if frame is not None and app.running:
-        app.update(fr.show_frame(frame))
-
-    # Hit 'q' on the keyboard to quit!
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release handle to the webcam
-video_capture.release()
-#cv2.destroyAllWindows()
+app.root.mainloop()

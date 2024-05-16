@@ -1,6 +1,7 @@
 import face_recognition
 import cv2
 import numpy as np
+import time
 
 class FaceRecognition():
 
@@ -21,7 +22,7 @@ class FaceRecognition():
         self.known_face_encodings  = list(data.values())
         self.known_names = list(data.keys())
 
-    def process_frame(self, frame):
+    async def process_frame(self, frame):
         """Find and compare faces on frame"""
         # Resize frame of video to 1/4 size for faster face recognition processing
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -32,7 +33,7 @@ class FaceRecognition():
         # Find all the faces and face encodings in the current frame of video
         self.face_locations = face_recognition.face_locations(rgb_small_frame)
         self.face_encodings = face_recognition.face_encodings(rgb_small_frame, self.face_locations)
-
+        
         self.face_names = []
         for face_encoding in self.face_encodings:
             # See if the face is a match for the known face(s)
