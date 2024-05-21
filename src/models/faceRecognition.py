@@ -18,11 +18,14 @@ class FaceRecognition():
 
     def get_names(self):
         """Save persons of database on memory"""
-        data = self.db.get_data()
-        self.known_face_encodings  = list(data.values())
-        self.known_names = list(data.keys())
+        self.data = self.db.get_data()
+        self.known_face_encodings  = [x[1] for x in self.data.values()]
+        self.known_names = [x[0] for x in self.data.values()]
 
-    async def process_frame(self, frame):
+    def ids(self):
+        return list(self.data.keys())
+
+    def process_frame(self, frame):
         """Find and compare faces on frame"""
         # Resize frame of video to 1/4 size for faster face recognition processing
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -44,7 +47,7 @@ class FaceRecognition():
             if True in matches:
                 first_match_index = matches.index(True)
                 name = self.known_names[first_match_index]
-
+            print(name)
             self.face_names.append(name)
         return self.face_names
 

@@ -12,13 +12,16 @@ class Database:
     def get_data(self):
         """Get name of a person based on image path
         :return map with name and encoding os people in database"""
-        return {x["name"]: np.array(x["encoding"]) for x in self.client.person.find({}, {"_id": 0})}
+        return {x["_id"]: (x["name"], np.array(x["encoding"])) for x in self.client.person.find()}
 
     def insert_person(self, name, encoding):
         """Insert a new person on database
         :param name: person name
         :param encoding: array of the face encoding"""
         self.client.person.insert_one({"name": name, "encoding": list(encoding)})
+
+    def delete_person(self, id_person):
+        self.client.person.delete_one({"_id": id_person})
 
     def close(self):
         """Close the database connection"""
