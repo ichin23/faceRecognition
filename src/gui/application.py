@@ -37,12 +37,7 @@ class Application():
         self.b1.pack()
         frame.pack()
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-        #self.root.mainloop
-        #self.run()
-    def run(self):
-        while True:
-            self.update(self.queue_frame.get())
-
+        self.root.withdraw()
 
     def initialize_manage(self):
         self.managescreen = ms.Managescreen(self.interface)
@@ -62,7 +57,8 @@ class Application():
         """Update the camera image
             :param -img: Image in array format
         """
-
+        if not self.open:
+            return
         img1 = np.ascontiguousarray(img[:, :, ::-1])
         self.last_img = img1
         image = Image.fromarray(img1)
@@ -108,8 +104,10 @@ class Application():
     
     def on_closing(self):
         """Ask for close application"""
-        self.running=False
+        self.open=False
         self.root.withdraw()
+        print("Press [F1] to open the GUI")
+
         #self.video_capture.release()
         #if messagebox.askyesno(title="Quit?", message="Do you really want to quit?"):
         #    self.root.destroy()

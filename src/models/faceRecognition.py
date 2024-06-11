@@ -5,8 +5,9 @@ import time
 
 class FaceRecognition():
 
-    def __init__(self, db):
+    def __init__(self, db, logger):
         self.db =db
+        self.logger = logger
 
         self.get_names()
 
@@ -15,6 +16,7 @@ class FaceRecognition():
         self.face_encodings = []
         self.face_names = []
         self.process_this_frame = True
+        self.last_face = None
 
     def get_names(self):
         """Save persons of database on memory"""
@@ -47,6 +49,8 @@ class FaceRecognition():
             if True in matches:
                 first_match_index = matches.index(True)
                 name = self.known_names[first_match_index]
+            
+            self.logger.info(f"Face found: {name}")
             print(name)
             self.face_names.append(name)
         return self.face_names

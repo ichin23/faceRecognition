@@ -1,21 +1,25 @@
 from threading import Thread
 import cv2
-import queue
-import asyncio
+import logging
 from pynput.keyboard import Listener, Key
 from models.faceRecognition import FaceRecognition
 from models.database import Database
 from models.interface import Main_Interface
 from gui.application import Application
 
-def listen():
-    with Listener(on_press=on_press) as listener:
-        listener.join()
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename="faceRecognition.log",
+                    format='%(asctime)s %(message)s',
+                    datefmt='%m/%d/%Y %I:%M:%S %p',
+                    encoding='utf-8',
+                    level=logging.DEBUG)
 
 def on_press(key):
+    print(key)
     if key == Key.f1:
         app.root.deiconify()
         app.root.focus_force()
+        app.open=True
 
 def update_camera(app):
     video_capture = cv2.VideoCapture(0)
@@ -34,9 +38,8 @@ def update_camera(app):
             app.update(fr.show_frame(frame))
 
 
-
 db = Database()
-fr = FaceRecognition(db)
+fr = FaceRecognition(db, logger)
 interface = Main_Interface(db, fr)
 app=Application(interface)
 
@@ -44,10 +47,9 @@ thread = Thread(target=update_camera, args=[app])
 thread.daemon=True
 thread.start()
 
-key_thread = Thread(target=listen, daemon=True)
-key_thread.start()
+listener = Listener(on_press=on_press)
+listener.start()
+
+print("Press [F1] to open the GUI")
 
 app.root.mainloop()
-
-
-
