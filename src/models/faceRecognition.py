@@ -1,6 +1,7 @@
 import face_recognition
 import cv2
 import numpy as np
+import requests
 import time
 
 class FaceRecognition():
@@ -41,10 +42,12 @@ class FaceRecognition():
         
         self.face_names = []
         for face_encoding in self.face_encodings:
+            print(face_encoding)
+            #requests.post("http://localhost:5000/personDetected", data={"encoding": list(face_encoding)})
+            
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding)
             name = "Unknown"
-
             # # If a match was found in known_face_encodings, just use the first one.
             if True in matches:
                 first_match_index = matches.index(True)
@@ -53,6 +56,7 @@ class FaceRecognition():
             self.logger.info(f"Face found: {name}")
             print(name)
             self.face_names.append(name)
+            
         return self.face_names
 
     def get_encoding(self, img):
